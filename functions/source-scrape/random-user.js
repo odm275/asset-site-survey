@@ -1,5 +1,6 @@
 const { RESTDataSource } = require("apollo-datasource-rest")
 const siteList = require("./siteList")
+const axios = require("axios")
 
 class RandomUser extends RESTDataSource {
   constructor() {
@@ -21,10 +22,16 @@ class RandomUser extends RESTDataSource {
 
   // ToDo:
   // Google is returning garbo, fix later. For now procceed.
+  // Send to listen-source-and-write lambda
   async getAllAssetSites() {
     const sites = await this.get(`/`)
-    console.log("asset rest point result")
-    console.log(sites)
+    // Post to endpoint
+    await axios.post(
+      "http://localhost:8888/.netlify/functions/listen-source-and-write-to-db",
+      {
+        siteList,
+      }
+    )
     return siteList
   }
 }
